@@ -10,8 +10,14 @@ from sklearn.model_selection import GridSearchCV
 from scipy.stats import randint as sp_randint
 from random import randrange as sp_randrange
 import numpy as np
+##from hyperband import HyperbandSearchCV
+from hpsklearn import HyperbandSearchCV
 
-
+from skopt import Optimizer
+from skopt import BayesSearchCV 
+from skopt.space import Real, Categorical, Integer
+from hyperopt import hp, fmin, tpe, STATUS_OK, Trials
+from sklearn.model_selection import cross_val_score, StratifiedKFold
 st.title("hyperparamtres thechnique tunning")
 
 
@@ -42,7 +48,7 @@ if button_clicked:
 
 
 #select machine learnig model
-options_machine_learning = ['random forest classifier ', 'support vector machine', 'K-nearest neighbors','ann','random forest regressor ','support vector regressor ','k neirgbost regressor']
+options_machine_learning = ['random forest classifier ', 'support vector machine', 'K-nearest neighbors','random forest regressor ','support vector regressor ','k neirgbost regressor']
 selected_option_m_l_a = st.selectbox('select machine learning model', options_machine_learning)
 #select hyperparametres
 if selected_option_m_l_a==options_machine_learning[0]:
@@ -187,7 +193,7 @@ if btn_hyperp:
      print(grid.best_params_)
      print("MSE:"+ str(-grid.best_score_))
      df_best_params = pd.DataFrame(grid.best_params_, index=[0])   
- if inputchoise['machine_learning_algorithm']== options_machine_learning[4] and inputchoise['hyperparamtres_thechnique']== option_hyperp_thechnique[0]:
+ if inputchoise['machine_learning_algorithm']== options_machine_learning[3] and inputchoise['hyperparamtres_thechnique']== option_hyperp_thechnique[0]:
      clf=ml_model.RFG()
      rf_params = {
     'n_estimators': [10, 20, 12],'max_depth': [15,20,30,50]}
@@ -196,7 +202,7 @@ if btn_hyperp:
      print(grid.best_params_)
      print("MSE:"+ str(-grid.best_score_))
      df_best_params = pd.DataFrame(grid.best_params_, index=[0])    
- if inputchoise['machine_learning_algorithm']== options_machine_learning[5] and inputchoise['hyperparamtres_thechnique']== option_hyperp_thechnique[0]:
+ if inputchoise['machine_learning_algorithm']== options_machine_learning[4] and inputchoise['hyperparamtres_thechnique']== option_hyperp_thechnique[0]:
      rf_params = {'C': [1,10, 100],"kernel":['poly','rbf','sigmoid'],"epsilon":[0.01,0.1,1]}
      clf = SVR(gamma='scale')
      grid = GridSearchCV(clf, rf_params, cv=int(cv_input), scoring=str(selected_option_metrcix))
@@ -205,13 +211,6 @@ if btn_hyperp:
      print("MSE:"+ str(-grid.best_score_))
      df_best_params = pd.DataFrame(grid.best_params_, index=[0])   
  if inputchoise['machine_learning_algorithm']== options_machine_learning[0] and inputchoise['hyperparamtres_thechnique']== option_hyperp_thechnique[1]:
-      rf_params = {
-    'n_estimators': sp_randint(10,100),
-    "max_features":sp_randint(1,64),
-    'max_depth': sp_randint(5,50),
-    "min_samples_split":sp_randint(2,11),
-    "min_samples_leaf":sp_randint(1,11),
-    "criterion":['gini','entropy']}
       n_iter_search=20 #number of iterations is set to 20, you can increase this number if time permits
       clf = RandomForestClassifier(random_state=0)
       Random = RandomizedSearchCV(clf, param_distributions=hyperparameters,n_iter=n_iter_search,cv=int(cv_input),scoring=str(selected_option_metrcix))
@@ -220,39 +219,35 @@ if btn_hyperp:
       print("Accuracy:"+ str(Random.best_score_))  
       df_best_params = pd.DataFrame(Random.best_params_, index=[0])   
  if inputchoise['machine_learning_algorithm']== options_machine_learning[1] and inputchoise['hyperparamtres_thechnique']== option_hyperp_thechnique[1]:
-     rf_params = {'C': stats.uniform(0,50),"kernel":['linear','poly','rbf','sigmoid']}
+   
      n_iter_search=20
      clf = SVC(gamma='scale')
-     Random = RandomizedSearchCV(clf, param_distributions=rf_params,n_iter=n_iter_search,cv=int(cv_input),scoring=str(selected_option_metrcix))
+     Random = RandomizedSearchCV(clf, param_distributions=hyperparameters,n_iter=n_iter_search,cv=int(cv_input),scoring=str(selected_option_metrcix))
      Random.fit(X, y)
      print(Random.best_params_)
      print("Accuracy:"+ str(Random.best_score_))
      df_best_params = pd.DataFrame(Random.best_params_, index=[0])
  if inputchoise['machine_learning_algorithm']== options_machine_learning[2] and inputchoise['hyperparamtres_thechnique']== option_hyperp_thechnique[1]:
-     rf_params = {'C': stats.uniform(0,50),"kernel":['linear','poly','rbf','sigmoid']}
      n_iter_search=20
      clf = SVC(gamma='scale')
-     Random = RandomizedSearchCV(clf, param_distributions=rf_params,n_iter=n_iter_search,cv=int(cv_input),scoring=str(selected_option_metrcix))
+     Random = RandomizedSearchCV(clf, param_distributions=hyperparameters,n_iter=n_iter_search,cv=int(cv_input),scoring=str(selected_option_metrcix))
      Random.fit(X, y)
      print(Random.best_params_)
      print("Accuracy:"+ str(Random.best_score_)) 
      df_best_params = pd.DataFrame(Random.best_params_, index=[0])  
- if inputchoise['machine_learning_algorithm']== options_machine_learning[4] and inputchoise['hyperparamtres_thechnique']== option_hyperp_thechnique[1]:
-     rf_params = {'n_neighbors': range(1,20),}
+ if inputchoise['machine_learning_algorithm']== options_machine_learning[3] and inputchoise['hyperparamtres_thechnique']== option_hyperp_thechnique[1]:
      n_iter_search=10
      clf = KNeighborsClassifier()
-     Random = RandomizedSearchCV(clf, param_distributions=rf_params,n_iter=n_iter_search,cv=int(cv_input),scoring=str(selected_option_metrcix))
+     Random = RandomizedSearchCV(clf, param_distributions=hyperparameters,n_iter=n_iter_search,cv=int(cv_input),scoring=str(selected_option_metrcix))
      Random.fit(X, y)
      print(Random.best_params_)
      print("Accuracy:"+ str(Random.best_score_)) 
      df_best_params = pd.DataFrame(Random.best_params_, index=[0])    
- if inputchoise['machine_learning_algorithm']== options_machine_learning[5] and inputchoise['hyperparamtres_thechnique']== option_hyperp_thechnique[1]:
-     rf_params = {'n_estimators': sp_randint(10,100),"max_features":sp_randint(1,13),'max_depth': sp_randint(5,50),"min_samples_split":sp_randint(2,11),"min_samples_leaf":sp_randint(1,11),"criterion":['mse','mae']}
+ if inputchoise['machine_learning_algorithm']== options_machine_learning[4] and inputchoise['hyperparamtres_thechnique']== option_hyperp_thechnique[1]:
      n_iter_search=20 #number of iterations is set to 20, you can increase this number if time permits
      clf = RandomForestRegressor(random_state=0)
-     Random = RandomizedSearchCV(clf, param_distributions=rf_params,n_iter=n_iter_search,cv=int(cv_input),scoring=str(selected_option_metrcix))
+     Random = RandomizedSearchCV(clf, param_distributions=hyperparameters,n_iter=n_iter_search,cv=int(cv_input),scoring=str(selected_option_metrcix))
      Random.fit(X, y)
-
      print(Random.best_params_)
      print("Accuracy:"+ str(Random.best_score_)) 
      df_best_params = pd.DataFrame(Random.best_params_, index=[0])                        
@@ -260,90 +255,80 @@ if btn_hyperp:
  
  if inputchoise['machine_learning_algorithm']== options_machine_learning[0] and inputchoise['hyperparamtres_thechnique']== option_hyperp_thechnique[2]:
      clf = ml_model.RFc()
-     grid = GridSearchCV(clf, rf_params, cv=cv_input, scoring=str(selected_option_metrcix))
-     grid.fit(X, y)
-     print(grid.best_params_)
-     df_best_params = pd.DataFrame(grid.best_params_, index=[0])
+     hyper = HyperbandSearchCV(clf, param_distributions =rf_params,cv=int(cv_input),min_iter=10,max_iter=100,scoring=str())
+     hyper.fit(X, y)
+     print(hyper.best_params_)
+     df_best_params = pd.DataFrame(hyper.best_params_, index=[0])
      
-     print("Accuracy:"+ str(grid.best_score_))
  
  if inputchoise['machine_learning_algorithm']== options_machine_learning[1] and inputchoise['hyperparamtres_thechnique']== option_hyperp_thechnique[2]:
      mod=ml_model.svc()
-     rf_params = {
-     'C': [1,10, 100],
-     "kernel":['poly','rbf','sigmoid'],
-     "epsilon":[0.01,0.1,1]}
      clf = SVR(gamma='scale')
-     grid = GridSearchCV(clf, rf_params, cv=cv_input, scoring=str(selected_option_metrcix))
-     grid.fit(X, y)
-     print(grid.best_params_)
-     print("MSE:"+ str(-grid.best_score_))
-     df_best_params = pd.DataFrame(grid.best_params_, index=[0])
+     hyper = HyperbandSearchCV(clf, param_distributions =rf_params,cv=3,min_iter=1,max_iter=10,scoring='neg_mean_squared_error',resource_param='C')
+     hyper.fit(X, y)
+     df_best_params = pd.DataFrame(hyper.best_params_, index=[0])
  if inputchoise['machine_learning_algorithm']== options_machine_learning[2] and inputchoise['hyperparamtres_thechnique']== option_hyperp_thechnique[2]:
      clf=ml_model.knn()
-     rf_params = {
-     'n_neighbors': [2, 4, 5, 7, 10]}
-     
-     grid = GridSearchCV(clf, rf_params, cv=cv_input, scoring=str(selected_option_metrcix))
-     grid.fit(X, y)
-     print(grid.best_params_)
-     print("MSE:"+ str(-grid.best_score_))
-     df_best_params = pd.DataFrame(grid.best_params_, index=[0])   
- if inputchoise['machine_learning_algorithm']== options_machine_learning[4] and inputchoise['hyperparamtres_thechnique']== option_hyperp_thechnique[2]:
+     hyper = HyperbandSearchCV(clf, param_distributions =rf_params,cv=3,min_iter=1,max_iter=20,scoring='neg_mean_squared_error',resource_param='n_neighbors')
+     hyper.fit(X, y)
+     df_best_params = pd.DataFrame(hyper.best_params_, index=[0])   
+ if inputchoise['machine_learning_algorithm']== options_machine_learning[3] and inputchoise['hyperparamtres_thechnique']== option_hyperp_thechnique[2]:
      clf=ml_model.RFG()
-     rf_params = {
-     'n_estimators': [10, 20, 12],'max_depth': [15,20,30,50]}
-     grid = GridSearchCV(clf, rf_params, cv=cv_input, scoring=str(selected_option_metrcix))
-     grid.fit(X, y)
-     print(grid.best_params_)
-     print("MSE:"+ str(-grid.best_score_))
-     df_best_params = pd.DataFrame(grid.best_params_, index=[0])    
- if inputchoise['machine_learning_algorithm']== options_machine_learning[5] and inputchoise['hyperparamtres_thechnique']== option_hyperp_thechnique[2]:
-     print("kd")
+     clf = RandomForestRegressor(random_state=0)
+     hyper = HyperbandSearchCV(clf, param_distributions =rf_params,cv=3,min_iter=10,max_iter=100,scoring='neg_mean_squared_error')
+     hyper.fit(X, y)
+     df_best_params = pd.DataFrame(hyper.best_params_, index=[0])    
+ if inputchoise['machine_learning_algorithm']== options_machine_learning[4] and inputchoise['hyperparamtres_thechnique']== option_hyperp_thechnique[2]:
+     clf = SVR(gamma='scale')
+     hyper = HyperbandSearchCV(clf, param_distributions =rf_params,cv=3,min_iter=1,max_iter=10,scoring='neg_mean_squared_error',resource_param='C')
+     hyper.fit(X, y)
+     df_best_params = pd.DataFrame(hyper.best_params_, index=[0])    
+
+ 
+ 
+ 
  
  
  if inputchoise['machine_learning_algorithm']== options_machine_learning[0] and inputchoise['hyperparamtres_thechnique']== option_hyperp_thechnique[3]:
      clf = ml_model.RFc()
-     grid = GridSearchCV(clf, rf_params, cv=cv_input, scoring=str(selected_option_metrcix))
-     grid.fit(X, y)
-     print(grid.best_params_)
-     df_best_params = pd.DataFrame(grid.best_params_, index=[0])
-     
-     print("Accuracy:"+ str(grid.best_score_))
+     Bayes = BayesSearchCV(clf, rf_params,cv=3,n_iter=20, n_jobs=-1,scoring='accuracy')
+     #number of iterations is set to 20, you can increase this number if time permits
+     Bayes.fit(X, y)
+     df_best_params=pd.DataFrame(hyper.best_params_, index=[0])
  
  if inputchoise['machine_learning_algorithm']== options_machine_learning[1] and inputchoise['hyperparamtres_thechnique']== option_hyperp_thechnique[3]:
      mod=ml_model.svc()
-     rf_params = {
-     'C': [1,10, 100],
-     "kernel":['poly','rbf','sigmoid'],
-     "epsilon":[0.01,0.1,1]}
-     clf = SVR(gamma='scale')
-     grid = GridSearchCV(clf, rf_params, cv=cv_input, scoring=str(selected_option_metrcix))
-     grid.fit(X, y)
-     print(grid.best_params_)
-     print("MSE:"+ str(-grid.best_score_))
-     df_best_params = pd.DataFrame(grid.best_params_, index=[0])
+     Bayes = BayesSearchCV(clf, rf_params,cv=3,n_iter=20, n_jobs=-1,scoring='accuracy')
+     Bayes.fit(X, y)
+     df_best_params = pd.DataFrame(Bayes.best_params_, index=[0])
  if inputchoise['machine_learning_algorithm']== options_machine_learning[2] and inputchoise['hyperparamtres_thechnique']== option_hyperp_thechnique[3]:
      clf=ml_model.knn()
-     rf_params = {
-     'n_neighbors': [2, 4, 5, 7, 10]}
-     
-     grid = GridSearchCV(clf, rf_params, cv=cv_input, scoring=str(selected_option_metrcix))
-     grid.fit(X, y)
-     print(grid.best_params_)
-     print("MSE:"+ str(-grid.best_score_))
-     df_best_params = pd.DataFrame(grid.best_params_, index=[0])   
- if inputchoise['machine_learning_algorithm']== options_machine_learning[4] and inputchoise['hyperparamtres_thechnique']== option_hyperp_thechnique[3]:
+     Bayes = BayesSearchCV(clf, rf_params,cv=3,n_iter=10, n_jobs=-1,scoring='accuracy')
+     Bayes.fit(X, y)
+     df_best_params = pd.DataFrame(Bayes.best_params_, index=[0])   
+ if inputchoise['machine_learning_algorithm']== options_machine_learning[3] and inputchoise['hyperparamtres_thechnique']== option_hyperp_thechnique[3]:
      clf=ml_model.RFG()
-     rf_params = {
-     'n_estimators': [10, 20, 12],'max_depth': [15,20,30,50]}
-     grid = GridSearchCV(clf, rf_params, cv=cv_input, scoring=str(selected_option_metrcix))
-     grid.fit(X, y)
-     print(grid.best_params_)
-     print("MSE:"+ str(-grid.best_score_))
-     df_best_params = pd.DataFrame(grid.best_params_, index=[0])    
- if inputchoise['machine_learning_algorithm']== options_machine_learning[5] and inputchoise['hyperparamtres_thechnique']== option_hyperp_thechnique[3]:
-     print("ke")
+     clf = RandomForestRegressor(random_state=0)
+     hyper = HyperbandSearchCV(clf, param_distributions =rf_params,cv=3,min_iter=10,max_iter=100,scoring='neg_mean_squared_error')
+     hyper.fit(X, y)
+     df_best_params = pd.DataFrame(hyper.best_params_, index=[0])    
+ if inputchoise['machine_learning_algorithm']== options_machine_learning[4] and inputchoise['hyperparamtres_thechnique']== option_hyperp_thechnique[3]:
+      clf = SVR(gamma='scale')
+      hyper = HyperbandSearchCV(clf, param_distributions =rf_params,cv=3,min_iter=1,max_iter=10,scoring='neg_mean_squared_error',resource_param='C')
+      hyper.fit(X, y)
+      df_best_params = pd.DataFrame(hyper.best_params_, index=[0])    
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
  
  
  if inputchoise['machine_learning_algorithm']== options_machine_learning[0] and inputchoise['hyperparamtres_thechnique']== option_hyperp_thechnique[4]:
