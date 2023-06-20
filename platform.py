@@ -10,6 +10,7 @@ from sklearn.model_selection import GridSearchCV
 from scipy.stats import randint as sp_randint
 from random import randrange as sp_randrange
 import numpy as np
+from sklearn.preprocessing import StandardScaler
 from hyperband import HyperbandSearchCV
 from sklearn.datasets import load_diabetes
 from sklearn.model_selection import train_test_split
@@ -30,7 +31,7 @@ total_time=0
 df_best_score=0
 import streamlit as st 
 
-st.sidebar.header("For code source of this App [link](https://github.com/mohamaderrr/hyperpatameter_tinning/blob/master/pl.py)")
+st.sidebar.header("For code source of this App [link](https://github.com/mohamaderrr/hyperpatameter_tinning/blob/master/platform.py)")
 st.sidebar.header("For Example with classification algorithmes  [link](https://github.com/mohamaderrr/hyperpatameter_tinning/blob/master/HPO_Classification.ipynb)")
 st.sidebar.header("For Example with Regression algorithmes  [link](https://github.com/mohamaderrr/hyperpatameter_tinning/blob/master/HPO_Regression%20(1).ipynb)")
 
@@ -52,6 +53,23 @@ if uploaded_file is not None:
     st.write(data)
     st.subheader('DATA INFORMATION')
     st.write(data.describe())
+    if st.button('Normalise The data'):
+        
+
+        scaler = StandardScaler()
+        
+        data = pd.DataFrame(scaler.fit_transform(data), columns=data.columns)
+        st.subheader('The Normalize DATA')
+        st.write(data)
+    if st.button('unnormalize the previously normalized data'):
+        
+
+        scaler = StandardScaler()
+        
+        data = pd.DataFrame(scaler.fit_transform(data), columns=data.columns)
+        st.subheader('The Normalize DATA')
+        data = pd.DataFrame(scaler.inverse_transform(data), columns=data.columns)
+        st.write(data)    
   
     
     #select Y:
@@ -108,8 +126,8 @@ if selected_option_m_l_a==options_machine_learning[0]:
     parameter_max_depths_step = st.sidebar.number_input('Step size for max_depths', 1)
     max_depths_range = np.arange(parameter_max_depths[0], parameter_max_depths[1]+parameter_n_estimators_step, parameter_max_depths_step)
     st.sidebar.text("min samples leaf")
-    parameter_min_samples = st.sidebar.slider('Number of min samples leaf (min_samples_leaf)', 0, 100, (10,50), 50)
-    parameter_min_samples_leaf_step = st.sidebar.number_input('Step size for min_samples_leaf', 10)
+    parameter_min_samples = st.sidebar.slider('Number of min samples leaf (min_samples_leaf)', 0, 100, (1,5), 1)
+    parameter_min_samples_leaf_step = st.sidebar.number_input('Step size for min_samples_leaf', 1)
     min_samples_leaf_range = np.arange(parameter_max_depths[0], parameter_max_depths[1]+parameter_n_estimators_step, parameter_max_depths_step)
     st.sidebar.text("max features")
     parameter_max_features = st.sidebar.slider('Number of max features (max_features)', 0, 100, (1,10), 1)
@@ -170,7 +188,7 @@ if selected_option_m_l_a==options_machine_learning[3]:
     parameter_max_depths_step = st.sidebar.number_input('Step size for max_depths', 1)
     max_depths_range = np.arange(parameter_max_depths[0], parameter_max_depths[1]+parameter_max_depths_step, parameter_max_depths_step)
     st.sidebar.text("min samples leaf")
-    parameter_min_samples = st.sidebar.slider('Number of min samples leaf (min_samples_leaf)', 0, 100, (10,50), 1)
+    parameter_min_samples = st.sidebar.slider('Number of min samples leaf (min_samples_leaf)', 0, 100, (1,5), 1)
     parameter_min_samples_leaf_step = st.sidebar.number_input('Step size for min_samples_leaf', 1)
     min_samples_leaf_range = np.arange(parameter_min_samples[0], parameter_min_samples[1]+parameter_min_samples_leaf_step, parameter_min_samples_leaf_step)
     st.sidebar.text("max features")
