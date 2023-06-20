@@ -31,7 +31,7 @@ df_best_score=0
 import streamlit as st 
 
 st.sidebar.header("For code source of this App [link](https://github.com/mohamaderrr/hyperpatameter_tinning/blob/master/pl.py)")
-st.sidebar.header("For Example with classification algorithmes  [link](https://github.com/mohamaderrr/hyperpatameter_tinning/blob/master/pl.py)")
+st.sidebar.header("For Example with classification algorithmes  [link](https://github.com/mohamaderrr/hyperpatameter_tinning/blob/master/HPO_Classification.ipynb)")
 st.sidebar.header("For Example with Regression algorithmes  [link](https://github.com/mohamaderrr/hyperpatameter_tinning/blob/master/HPO_Regression%20(1).ipynb)")
 
 import pandas as pd
