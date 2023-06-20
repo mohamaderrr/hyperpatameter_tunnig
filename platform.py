@@ -224,7 +224,7 @@ split_size = st.sidebar.slider('Data split ratio (% for Training Set)', 10, 100,
 #X_train, X_test, Y_train, Y_test = train_test_split(X, y, test_size=split_size)
 
 #select metric:
-options_metric = ['neg_mean_squared_error', 'accuracy']
+options_metric = [ 'accuracy','neg_mean_squared_error']
 selected_option_metrcix = st.sidebar.selectbox('select metric', options_metric)
 st.subheader("the Metric is : ")
 st.write(selected_option_metrcix )
