@@ -1,4 +1,0 @@
-option_hyperp_thechnique = ['grid search  ', 'random search ', 'hyperband serachcv','bayesion Optimization with gaussian process','bayesion Optimization with bo-tpe','gradient descent ','pso','genetic  algorithms']
-
-
-options_machine_learning = ['random forest classifier ', 'support vector machine', 'K-nearest neighbors','ann','random forest regressor ','support vector regressor ','k neirgbost regressor']
