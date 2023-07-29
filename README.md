@@ -1,2 +1,2 @@
-# hyperpatameter_tinning
-streamlit app that have multi techniques for hyperparametrs tunning deferents machine learning models
+# hyperpatameter_tunning
+streamlit app that have multi techniques for hyperparametrs tunning for  deferents machine learning models
